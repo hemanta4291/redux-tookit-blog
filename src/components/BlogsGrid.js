@@ -1,16 +1,18 @@
 import React,{useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchBlogs } from '../features/Blogs/BlogsSlice';
+import BlogsGridItem from './BlogsGridItem';
 
 const BlogsGrid = () => {
     const dispatch = useDispatch();
     const { blogs, isLoading, isError, error } = useSelector(
         (state) => state.blogs
     );
+    const { tags, search } = useSelector((state) => state.filter);
 
     useEffect(() => {
-        dispatch(fetchBlogs());
-    }, [dispatch]);
+        dispatch(fetchBlogs({tags,search}));
+    }, [dispatch,tags,search]);
     let content;
 
     if (isLoading) content = <div>Loading...........</div>;
@@ -23,11 +25,7 @@ const BlogsGrid = () => {
 
     if (!isError && !isLoading && blogs?.length > 0) {
         content = blogs.map((video) => (
-            <div className='border-2 p-3 text-center' key={video.id}>
-                <h2>Titile of the year</h2>
-                <p>description</p>
-                <span>details</span>
-            </div>
+            <BlogsGridItem video={video} key={video.id}/>
         ));
     }
     
